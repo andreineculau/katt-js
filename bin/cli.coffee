@@ -18,6 +18,7 @@ argparse = require 'argparse'
 _ = require 'lodash'
 katt = require '../'
 pkg = require '../package'
+test = require 'tape'
 
 parseArgs = (args) ->
   ArgumentParser = argparse.ArgumentParser
@@ -38,28 +39,21 @@ parseArgs = (args) ->
   parser.parseArgs args
 
 
+exports.createTest = (scenario, params = {}) ->
+  params = _.cloneDeep params
+  test scenario, (t) ->
+    katt.run {scenario, params}, (err, result) ->
+      if err?
+        return t.error err
+      t.equal result.status, 'pass', JSON.stringify result, null, 2
+      t.end()
+
+
 main = exports.main = (args = process.args) ->
   args = parseArgs args
   {params, scenarios} = args
   params = JSON.parse params  if params?
-  hadErrors = 0
-  next = () ->
-    process.exit hadErrors  unless scenarios.length
-    paramsCopy = undefined
-    paramsCopy = _.cloneDeep params  if params?
-    scenario = scenarios.shift()
-    process.stdout.write "- #{scenario} - "
-    katt.run {scenario, params: paramsCopy}, (err, result) ->
-      if err?
-        hadErrors = 1
-        console.log 'ERROR'
-        return console.error err
-      console.log result.status.toUpperCase()
-      if result.status is 'fail'
-        hadErrors = 1
-        console.error JSON.stringify result, null, 2
-      next()
-  next()
+  exports.createTest scenario, params  for scenario in scenarios
 
 
 main()  if require.main is module
