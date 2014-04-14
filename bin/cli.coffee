@@ -42,18 +42,22 @@ main = exports.main = (args = process.args) ->
   args = parseArgs args
   {params, scenarios} = args
   params = JSON.parse params  if params?
+  hadErrors = 0
   next = () ->
-    return  unless scenarios.length
+    process.exit hadErrors  unless scenarios.length
     paramsCopy = undefined
     paramsCopy = _.cloneDeep params  if params?
     scenario = scenarios.shift()
     process.stdout.write "- #{scenario} - "
     katt.run {scenario, params: paramsCopy}, (err, result) ->
       if err?
+        hadErrors = 1
         console.log 'ERROR'
         return console.error err
       console.log result.status.toUpperCase()
-      console.error JSON.stringify result, null, 2  if result.status isnt 'pass'
+      if result.status is 'fail'
+        hadErrors = 1
+        console.error JSON.stringify result, null, 2
       next()
   next()
 
