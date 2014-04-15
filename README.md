@@ -36,7 +36,7 @@ are expected beyond the ones defined.
 ## Examples
 
 ```coffeescript
-katt = require 'katt'
+katt = require 'katt-js'
 scenario = './doc/example-httpbin.apib'
 params =
   hostname: 'httpbin.org'
@@ -62,6 +62,13 @@ katt.run {scenario, params}, (err, result ) ->
     * `parse` to be called with `headers`, `body`, `params`, `callbacks`
     * `request` to be called async with `request`, `params`, `callbacks`
     * `validate` to be called async with `actual`, `expected`, `params`, `callbacks`
+
+
+## CLI
+
+```shell
+katt-js -p '{"hostname":"httpbin.org","your_name":"Klarna","my_name":"KATT","whoarewe":"Klarna_and_KATT"}' doc/example-httpbin.apib
+```
 
 
 ## Contributing
