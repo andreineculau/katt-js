@@ -16,6 +16,7 @@
 
 http = require 'http'
 https = require 'https'
+{Buffer} = require 'buffer'
 url = require 'url'
 _ = require 'lodash'
 utils = require './utils'
@@ -81,6 +82,7 @@ exports.request = ({request, params, callbacks}, finalNext) ->
     else
       throw new Error "Unknown protocol #{options.protocol}"
 
+  options.headers['Content-Length'] ?= Buffer.byteLength request.body  if request.body?
   req = protocol.request options, (res) ->
     res.setEncoding 'utf8'
     res.body = ''
