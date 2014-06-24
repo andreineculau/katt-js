@@ -50,6 +50,7 @@ exports.makeKattRequest = ({request, params, callbacks}) ->
   url = callbacks.recall {scope: 'url', input: url, params, callbacks}
   url = exports.makeRequestUrl {url, params, callbacks}
   headers = request.headers
+  headers = utils.normalizeHeaders headers
   headers = callbacks.recall {scope: 'headers', input: headers, params, callbacks}
   body = request.body
   {body} = callbacks.recall {scope: 'body', input: {headers, body}, params, callbacks}
